@@ -42,15 +42,17 @@ var wsStatusF =  function(store, isClosed) {
 };
 
 var AppActions = {
-    async init(ctx) {
-        try {
-            var tok =  caf_cli.extractTokenFromURL(window.location.href);
-            var data = await ctx.session.hello(ctx.session.getCacheKey(), tok)
-                    .getPromise();
-            updateF(ctx.store, data);
-        } catch (err) {
-            errorF(ctx.store, err);
-        }
+    init(ctx, cb) {
+        var tok =  caf_cli.extractTokenFromURL(window.location.href);
+        var data = ctx.session.hello(ctx.session.getCacheKey(), tok,
+                                     function(err, data) {
+                                         if (err) {
+                                             errorF(ctx.store, err);
+                                         } else {
+                                             updateF(ctx.store, data);
+                                         }
+                                         cb(err, data);
+                                     });
     },
     message(ctx, msg) {
         notifyF(ctx.store, msg);
@@ -70,6 +72,25 @@ var AppActions = {
     }
 };
 
+
+['setMarker', 'deleteMarker', 'getState'].forEach(function(x) {
+    AppActions[x] = function() {
+        var args = Array.prototype.slice.call(arguments);
+        var ctx = args.shift();
+        args.push(function(err, data) {
+            if (err) {
+                errorF(ctx.store, err);
+            } else {
+                updateF(ctx.store, data);
+            }
+        });
+        ctx.session[x].apply(ctx.session, args);
+    };
+});
+
+/*
+ // Samsung Internet 4.X does not support async/await
+
 ['setMarker', 'deleteMarker', 'getState'].forEach(function(x) {
     AppActions[x] = async function() {
         try {
@@ -83,6 +104,6 @@ var AppActions = {
         }
     };
 });
-
+*/
 
 module.exports = AppActions;

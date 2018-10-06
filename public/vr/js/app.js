@@ -9,17 +9,15 @@ var AppSession = require('./session/AppSession');
 var cE = React.createElement;
 var MyApp = require('./components/MyApp');
 
-var main = exports.main = async function(data) {
+var main = exports.main = function(data) {
     if (typeof window !== 'undefined') {
         var ctx =  {
             store: redux.createStore(AppReducer)
         };
-        try {
-            await AppSession.connect(ctx);
+        AppSession.connect(ctx, function(err, data) {
+            err && console.log('Got error initializing: ' + err);
             ReactDOM.render(cE(MyApp, {ctx: ctx}),
                             document.getElementById('content'));
-        } catch (err) {
-            console.log('Got error initializing: ' + err);
-        }
+        });
     }
 };

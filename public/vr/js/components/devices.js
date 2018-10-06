@@ -5,7 +5,8 @@ const DELETE = exports.DELETE = 'delete';
 const DEVICES = exports.DEVICES = {
     delete: {
         color: 'black',
-        type: null
+        type: null,
+        fontColor: 'white'
     },
     red: {
         color: 'red',

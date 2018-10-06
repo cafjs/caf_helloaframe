@@ -1,6 +1,7 @@
 var React = require('react');
-var rVR = require('react-vr');
 var cE = React.createElement;
+var aframeR = require('aframe-react');
+var Entity = aframeR.Entity;
 
 
 class AppStatus extends React.Component {
@@ -11,16 +12,25 @@ class AppStatus extends React.Component {
 
     render() {
         return (this.props.isClosed ?
-                cE(rVR.Text, {style: {
-                      fontSize: 0.8,
-                      layoutOrigin: [0.5, 0.5],
-                      paddingLeft: 0.2,
-                      paddingRight: 0.2,
-                      textAlign: 'center',
-                      textAlignVertical: 'center',
-                      backgroundColor: 'red',
-                      transform: [{translate: [0, 0, -4]}]
-                  }}, 'Please reload') : cE(rVR.View, null));
+                cE(Entity, {},
+                   cE(Entity, {
+                       geometry : {primitive: 'box', width: 6, height: 1,
+                                   depth:0.1},
+                       material: {color: 'yellow'},
+                       position: {x: 0, y: 2, z: -4.1}
+
+                   }),
+                   cE(Entity, {
+                       text: {
+                           value: 'Please reload',
+                           align: 'center',
+                           color: 'red',
+                           width: 20.0
+                       },
+                       position:{x: 0, y: 2, z: -4}
+                   })
+                  ) :
+                cE(Entity, null));
     }
 }
 

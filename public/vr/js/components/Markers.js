@@ -1,6 +1,7 @@
 var React = require('react');
-var rVR = require('react-vr');
 var cE = React.createElement;
+var aframeR = require('aframe-react');
+var Entity = aframeR.Entity;
 
 var mapHuman = require('./mapHuman');
 var devices = require('./devices');
@@ -9,18 +10,6 @@ const DEVICES = devices.DEVICES;
 var AppActions = require('../actions/AppActions');
 var SphereMarker = require('./SphereMarker');
 
-const Z_OFFSET = 0.1;
-
-const STYLES = {
-    markerNormal : {
-        opacity:0.2,
-        color: 'blue'
-    },
-    markerEntered : {
-        color: 'black'
-    }
-};
-
 
 // return map from marked 'part name' to 'color'
 var markerColors = function(markers) {
@@ -28,7 +17,7 @@ var markerColors = function(markers) {
     Object.keys(markers).forEach(function(x) {
         var m = markers[x];
         color[mapHuman.idToPart[m.location.part]] = m.color;
-        });
+    });
     return color;
 };
 
@@ -38,7 +27,7 @@ var markerNames = function(markers) {
     Object.keys(markers).forEach(function(x) {
         var m = markers[x];
         names[mapHuman.idToPart[m.location.part]] = x;
-        });
+    });
     return names;
 };
 
@@ -76,7 +65,7 @@ class Markers extends React.Component {
     render() {
         var color = markerColors(this.props.markers);
         var parts = Object.keys(mapHuman.partToId);
-        return cE(rVR.View, {style: {position: 'absolute'}},
+        return cE(Entity, {},
                   parts.map((part, i) => cE(SphereMarker,
                                             {key: 44367*i + 91,
                                              part: part,

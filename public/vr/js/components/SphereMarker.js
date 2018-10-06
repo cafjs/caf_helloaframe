@@ -1,17 +1,21 @@
 var React = require('react');
-var rVR = require('react-vr');
 var cE = React.createElement;
 var mapHuman = require('./mapHuman');
+var aframeR = require('aframe-react');
+var Entity = aframeR.Entity;
 
 const Z_OFFSET = 0.1;
 
 const STYLES = {
     markerNormal : {
         opacity:0.2,
-        color: 'blue'
+        color: 'blue',
+        transparent: true
     },
     markerEntered : {
-        color: 'black'
+        opacity: 1.0,
+        color: 'black',
+        transparent: false
     }
 };
 
@@ -22,40 +26,53 @@ class SphereMarker extends React.Component {
         this.state = {entered: false};
     }
 
+    handleClick() {
+        this.props.callback(this.props.part);
+    }
+
+    handleMouseenter() {
+        this.setState({entered: true});
+    }
+
+    handleMouseleave() {
+        this.setState({entered: false});
+    }
 
     render() {
 
         var style = STYLES.markerNormal;
 
         if (this.props.color) {
-            style = {color: this.props.color};
+            style = {
+                color: this.props.color,
+                opacity:1.0,
+                transparent: false
+            };
         }
 
         if (this.state.entered) {
             style = STYLES.markerEntered;
         }
 
-        style = Object.assign({}, style); // clone
-
         var pos = mapHuman.partToPos[this.props.part];
         var t  = [pos[0] + this.props.offset[0],
                   pos[1] + this.props.offset[1],
                   Z_OFFSET + this.props.offset[2]];
-        style.transform =  [{translate: t}];
-        style.position = 'absolute';
+        var position = {x: t[0], y: t[1], z: t[2]};
 
-        return cE(rVR.VrButton, { onClick: () =>
-                                  this.props.callback(this.props.part),
-                                  onEnter: () =>
-                                  this.setState({entered: true}),
-                                  onExit: () =>
-                                  this.setState({entered: false})
-                                },
-                  cE(rVR.Sphere, {
-                      style: style, radius: 0.05, lit: true,
-                      widthSegments: 10, heightSegments: 8
-                  })
-                 );
+        return cE(Entity, {
+            geometry : {
+                primitive: 'sphere',
+                radius: 0.05
+            },
+            material: style,
+            position: position,
+            events: {
+                click: this.handleClick.bind(this),
+                mouseenter: this.handleMouseenter.bind(this),
+                mouseleave: this.handleMouseleave.bind(this)
+            }
+        });
     }
 }
 

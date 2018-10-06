@@ -13,6 +13,7 @@
         "redux" : "^3.5.0",
         "aframe": "^0.8.0",
         "aframe-react": "^4.4.0",
+        "aframe-material-collection": "^0.4.31",
         "keymirror": "^0.1.0"
 
     },
